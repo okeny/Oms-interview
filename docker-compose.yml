@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  api:
+    container_name: building-management-api
+    build:
+      context: .
+      dockerfile: Dockerfile  
+    ports:
+      - "${API_PORT:-8080}:8000"
+    volumes:
+      - ./:/usr/src/app/
+      - ./migrations:/app/migrations
+    restart: on-failure
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_HOST=db  
+      - DB_PORT=5432
+      - DB_SSLMODE=disable
+    networks:
+      - building_management_network
+
+  db:
+    image: postgres:16
+    container_name: building_management_db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - '${DB_PORT:-5432}:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - building_management_network
+
+volumes:
+  postgres_data:
+
+networks:
+  building_management_network:
+    driver: bridge
