@@ -48,6 +48,6 @@ func Init(db *sql.DB) (*fiber.App, error) {
 	// Register routes
 	BuildingInitRoute(apiVersion, buildingController)
 	ApartmentInitRoute(apiVersion, apartmentController)
-
+    HealthCheckInitRoute(apiVersion)
 	return app, nil
 }

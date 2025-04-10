@@ -4,7 +4,7 @@ import (
 	"building_management/config"
 	"database/sql"
 	"fmt"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"time"
 )
 
