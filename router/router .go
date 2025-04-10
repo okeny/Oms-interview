@@ -14,7 +14,9 @@ import (
 
 // Init sets up and returns the Fiber app
 func Init(db *sql.DB) (*fiber.App, error) {
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+        AppName: "Building Management API",
+	})
     // Add logger middleware
 	app.Use(logger.New()) 
 	

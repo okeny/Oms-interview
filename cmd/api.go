@@ -6,12 +6,11 @@ import (
 	"building_management/router"
 	"context"
 	"fmt"
-	log "github.com/sirupsen/logrus"
-	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -26,54 +25,54 @@ func API() *cobra.Command {
 }
 
 func runAPI() {
+	// Load environment variables
 	if err := config.LoadEnv(); err != nil {
-		log.WithError(err).Fatal("Failed to load config")
+		log.WithError(err).Fatal("Failed to load environment configuration")
 	}
 
 	port, err := config.Get(Port)
 	if err != nil {
-		log.WithError(err).Fatal("Failed to get port")
+		log.WithError(err).Fatal("Failed to get port from config")
 	}
+	host := fmt.Sprintf(":%s", port)
 
-	// Initialize DB and inject into services if needed
+	// Initialize DB
 	db, err := database.NewClient()
 	if err != nil {
-		log.WithError(err).Fatal("error creating database client")
+		log.WithError(err).Fatal("Failed to initialize database client")
 	}
 	defer db.Close()
 
+	// Initialize the app/router
 	app, err := router.Init(db)
 	if err != nil {
-		log.WithError(err).Fatal("err initializing router")
+		log.WithError(err).Fatal("Failed to initialize router")
 	}
-	// Start the server
-	host := fmt.Sprintf(":%s", port)
+
+	// Setup signal catching for graceful shutdown
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+
+	// Start the server in a goroutine
 	go func() {
+		log.Infof("Server starting on %s", host)
 		if err := app.Listen(host); err != nil {
-			log.WithError(err).Fatal("Http server closed unexpectedly")
+			log.WithError(err).Error("Server stopped unexpectedly")
+			stop() // trigger graceful shutdown
 		}
 	}()
 
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	// Wait for shutdown signal
+	<-ctx.Done()
+	log.Info("Shutdown signal received. Cleaning up...")
 
-	shutdown := make(chan struct{})
-	go func() {
-		<-quit
-		log.Println("Received termination signal. Shutting down...")
-		close(shutdown) // Trigger shutdown for other services
-	}()
+	// Graceful shutdown with timeout
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
-	select {
-	case <-shutdown:
-		// Handle shutdown logic (e.g., close DB, stop workers)
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
-
-		// Gracefully shutdown the server with a timeout
-		if err := app.ShutdownWithContext(ctx); err != nil {
-			log.Fatal("Server forced to shutdown: ", err)
-		}
-		log.Println("Server shutdown complete.")
+	if err := app.ShutdownWithContext(shutdownCtx); err != nil {
+		log.WithError(err).Fatal("Error during server shutdown")
 	}
+
+	log.Info("Server shutdown complete.")
 }
