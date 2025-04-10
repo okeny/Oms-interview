@@ -42,7 +42,6 @@
     COPY --from=builder /app/bms-service .
     COPY --from=builder /app/.env .
 
-    # Optional: mark the binary as executable
     RUN chmod +x ./bms-service
     
     # Expose API port

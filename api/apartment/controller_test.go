@@ -72,12 +72,12 @@ func TestController_GetApartments(t *testing.T) {
 
 			req := httptest.NewRequest("GET", "/apartments", nil)
 			resp, err := app.Test(req)
-			assert.NoError(t, err)
-
-			assert.Equal(t, tt.expectedCode, resp.StatusCode)
-			bodyBytes, _ := io.ReadAll(resp.Body)
-			body, _ := json.MarshalIndent(json.RawMessage(tt.expectedBody), "", "  ")
-			assert.JSONEq(t, string(body), string(bodyBytes))
+			if assert.NoError(t, err) {
+				assert.Equal(t, tt.expectedCode, resp.StatusCode)
+				bodyBytes, _ := io.ReadAll(resp.Body)
+				body, _ := json.MarshalIndent(json.RawMessage(tt.expectedBody), "", "  ")
+				assert.JSONEq(t, string(body), string(bodyBytes))
+			}
 		})
 	}
 }
@@ -149,13 +149,13 @@ func TestController_GetApartmentByID(t *testing.T) {
 
 			req := httptest.NewRequest("GET", tt.url, nil)
 			resp, err := app.Test(req)
-			assert.NoError(t, err)
+			if assert.NoError(t, err){
+				assert.Equal(t, tt.expectedCode, resp.StatusCode)
 
-			assert.Equal(t, tt.expectedCode, resp.StatusCode)
-
-			bodyBytes, _ := io.ReadAll(resp.Body)
-			body, _ := json.MarshalIndent(json.RawMessage(tt.expectedBody), "", "  ")
-			assert.JSONEq(t, string(body), string(bodyBytes))
+				bodyBytes, _ := io.ReadAll(resp.Body)
+				body, _ := json.MarshalIndent(json.RawMessage(tt.expectedBody), "", "  ")
+				assert.JSONEq(t, string(body), string(bodyBytes))
+			}			
 		})
 	}
 }
@@ -223,13 +223,14 @@ func TestController_GetApartmentsByBuilding(t *testing.T) {
 
 			req := httptest.NewRequest("GET", tt.url, nil)
 			resp, err := app.Test(req)
-			assert.NoError(t, err)
+			if assert.NoError(t, err){
 
-			assert.Equal(t, tt.expectedCode, resp.StatusCode)
+				assert.Equal(t, tt.expectedCode, resp.StatusCode)
 
-			bodyBytes, _ := io.ReadAll(resp.Body)
-			body, _ := json.MarshalIndent(json.RawMessage(tt.expectedBody), "", "  ")
-			assert.JSONEq(t, string(body), string(bodyBytes))
+				bodyBytes, _ := io.ReadAll(resp.Body)
+				body, _ := json.MarshalIndent(json.RawMessage(tt.expectedBody), "", "  ")
+				assert.JSONEq(t, string(body), string(bodyBytes))
+			}
 		})
 	}
 }
@@ -298,12 +299,12 @@ func TestController_CreateOrUpdateApartment(t *testing.T) {
 			req := httptest.NewRequest("POST", "/apartments", strings.NewReader(tt.body))
 			req.Header.Set("Content-Type", "application/json")
 			resp, err := app.Test(req)
-			assert.NoError(t, err)
-
-			assert.Equal(t, tt.expectedCode, resp.StatusCode)
-			bodyBytes, _ := io.ReadAll(resp.Body)
-			body, _ := json.MarshalIndent(json.RawMessage(tt.expectedBody), "", "  ")
-			assert.JSONEq(t, string(body), string(bodyBytes))
+			if assert.NoError(t, err){
+				assert.Equal(t, tt.expectedCode, resp.StatusCode)
+				bodyBytes, _ := io.ReadAll(resp.Body)
+				body, _ := json.MarshalIndent(json.RawMessage(tt.expectedBody), "", "  ")
+				assert.JSONEq(t, string(body), string(bodyBytes))
+			}
 		})
 	}
 }
@@ -359,15 +360,16 @@ func TestController_DeleteApartment(t *testing.T) {
 
 			req := httptest.NewRequest("DELETE", tt.url, nil)
 			resp, err := app.Test(req)
-			assert.NoError(t, err)
+			if assert.NoError(t, err){
 
-			assert.Equal(t, tt.expectedCode, resp.StatusCode)
-			bodyBytes, _ := io.ReadAll(resp.Body)
-			if tt.expectedBody != "" {
-				body, _ := json.MarshalIndent(json.RawMessage(tt.expectedBody), "", "  ")
-				assert.JSONEq(t, string(body), string(bodyBytes))
-			} else {
-				assert.Empty(t, string(bodyBytes))
+				assert.Equal(t, tt.expectedCode, resp.StatusCode)
+				bodyBytes, _ := io.ReadAll(resp.Body)
+				if tt.expectedBody != "" {
+					body, _ := json.MarshalIndent(json.RawMessage(tt.expectedBody), "", "  ")
+					assert.JSONEq(t, string(body), string(bodyBytes))
+				} else {
+					assert.Empty(t, string(bodyBytes))
+				}
 			}
 		})
 	}

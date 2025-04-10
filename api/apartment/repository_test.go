@@ -66,13 +66,10 @@ func TestGetApartments(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.mockSetup(mock)
 			result, err := repo.GetApartments(ctx)
-
 			// Compare results
 			assert.Equal(t, tt.expectedResult, result)
-
 			// Compare errors using checkError helper
 			checkError(t, err, tt.expectedErrMsg)
-
 			assert.NoError(t, mock.ExpectationsWereMet())
 		})
 	}
@@ -123,13 +120,10 @@ func TestGetApartmentByID(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.mockSetup(mock)
 			result, err := repo.GetApartmentByID(ctx, tt.id)
-
 			// Compare results
 			assert.Equal(t, tt.expectedResult, result)
-
 			// Compare errors using checkError helper
 			checkError(t, err, tt.expectedErrMsg)
-
 			assert.NoError(t, mock.ExpectationsWereMet())
 		})
 	}
