@@ -3,7 +3,6 @@ package building
 import (
 	"building_management/interfaces/api/building"
 	"errors"
-	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -64,18 +63,18 @@ func (ctl Controller) CreateOrUpdateBuilding(c *fiber.Ctx) error {
 }
 
 func (ctl Controller) DeleteBuilding(c *fiber.Ctx) error {
-	id, err := strconv.Atoi(c.Params("id"))
+	id, err := c.ParamsInt("id")
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
 	}
 
-    if err := ctl.service.DeleteBuilding(c.Context(), id); err != nil {
-        return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-            "error": "building not found",
-        })
-    }
+	if err := ctl.service.DeleteBuilding(c.Context(), id); err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "building not found",
+		})
+	}
 
-    return c.Status(fiber.StatusOK).JSON(fiber.Map{
-        "message": "Building deleted",
-    })
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Building deleted",
+	})
 }

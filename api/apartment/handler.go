@@ -6,7 +6,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -16,11 +15,11 @@ type Handler struct {
 }
 
 func NewHandler(db *sql.DB) Handler {
-	return Handler{db:db}
+	return Handler{db: db}
 }
 
 func (h Handler) GetID(c *fiber.Ctx) (int, error) {
-	id, err := strconv.Atoi(c.Params("id"))
+	id, err := c.ParamsInt("id")
 	if err != nil {
 		return 0, err
 	}
@@ -33,10 +32,10 @@ func (h Handler) GetCreateOrUpdateRequest(c *fiber.Ctx) (apartment.ApartmentRequ
 	if err := c.BodyParser(&request); err != nil {
 		return apartment.ApartmentRequest{}, err
 	}
-	 _, err := h.CheckBuilding(c.Context(), request.BuildingID)
-	 if err != nil {
+	_, err := h.CheckBuilding(c.Context(), request.BuildingID)
+	if err != nil {
 		return apartment.ApartmentRequest{}, err
-	 }
+	}
 
 	return request, nil
 }
