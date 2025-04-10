@@ -4,26 +4,22 @@ import (
 	"building_management/api/apartment"
 	"building_management/api/building"
 	"building_management/config"
+	"building_management/middleware"
 	"database/sql"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
 // Init sets up and returns the Fiber app
 func Init(db *sql.DB) (*fiber.App, error) {
 	app := fiber.New()
-	app.Use(logger.New()) // Add logger middleware
-
+    // Add logger middleware
+	app.Use(logger.New()) 
+	
 	// Add CORS middleware
-	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "*",
-		AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS",
-		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
-		AllowCredentials: false,
-	}))
+	app.Use(middleware.HandleCorsMiddleware())
 
 	// Get API version from config
 	version, err := config.Get("API_VERSION")
