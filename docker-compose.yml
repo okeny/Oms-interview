@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   api:
     container_name: building-management-api
@@ -25,6 +23,11 @@ services:
       - DB_SSLMODE=disable
     networks:
       - building_management_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   db:
     image: postgres:16
@@ -52,6 +55,9 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
+    depends_on:
+      api:
+        condition: service_healthy
     networks:
       - building_management_network
 
@@ -64,6 +70,9 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:
       - grafana-storage:/var/lib/grafana
+    depends_on:
+      prometheus:
+        condition: service_started
     networks:
       - building_management_network
 
