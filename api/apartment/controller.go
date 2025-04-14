@@ -3,6 +3,7 @@ package apartment
 import (
 	"building_management/interfaces/api/apartment"
 	"errors"
+	"building_management/metrics"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -76,12 +77,16 @@ func (ctl Controller) CreateOrUpdateApartment(c *fiber.Ctx) error {
 	}
 
 	apartment, err := ctl.service.CreateOrUpdateApartment(c.Context(), apartmentRequest)
-    if err != nil {
-        return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
-    }
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	// increment the appartment counter
+	if apartmentRequest.ID != 0 {
+		metrics.ApartmentCreatedCounter.Inc()
+	}
 
-    // Wrap the response in a slice
-    return c.Status(fiber.StatusCreated).JSON(apartment)
+	// Wrap the response in a slice
+	return c.Status(fiber.StatusCreated).JSON(apartment)
 }
 
 // Delete apartment by ID

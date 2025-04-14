@@ -8,6 +8,7 @@ services:
       dockerfile: Dockerfile  
     ports:
       - "${API_PORT:-8080}:8000"
+      - "2112:2112"  # Expose Prometheus metrics
     volumes:
       - ./:/usr/src/app/
       - ./migrations:/app/migrations
@@ -44,8 +45,31 @@ services:
     networks:
       - building_management_network
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - building_management_network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    networks:
+      - building_management_network
+
 volumes:
   postgres_data:
+  grafana-storage:
 
 networks:
   building_management_network:

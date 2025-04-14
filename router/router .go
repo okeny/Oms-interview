@@ -7,21 +7,31 @@ import (
 	"building_management/middleware"
 	"database/sql"
 	"log"
+	"net/http"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 // Init sets up and returns the Fiber app
 func Init(db *sql.DB) (*fiber.App, error) {
 	app := fiber.New(fiber.Config{
-        AppName: "Building Management API",
+		AppName: "Building Management API",
 	})
-    // Add logger middleware
-	app.Use(logger.New()) 
-	
+	// Add logger middleware
+	app.Use(logger.New())
 	// Add CORS middleware
 	app.Use(middleware.HandleCorsMiddleware())
+
+	// Add Prometheus custom middleware
+	go func() {
+		http.Handle("/metrics", promhttp.Handler())
+		log.Println("Prometheus metrics available at :2112/metrics")
+		if err := http.ListenAndServe(":2112", nil); err != nil {
+			log.Fatal("Metrics server failed:", err)
+		}
+	}()
 
 	// Get API version from config
 	version, err := config.Get("API_VERSION")
@@ -46,6 +56,6 @@ func Init(db *sql.DB) (*fiber.App, error) {
 	// Register routes
 	BuildingInitRoute(apiVersion, buildingController)
 	ApartmentInitRoute(apiVersion, apartmentController)
-    HealthCheckInitRoute(apiVersion)
+	HealthCheckInitRoute(apiVersion)
 	return app, nil
 }

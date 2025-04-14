@@ -41,22 +41,44 @@ func (repo Repository) GetBuildingByID(ctx context.Context, id int) (*models.Bui
 }
 
 func (repo Repository) CreateOrUpdateBuilding(ctx context.Context, building models.Building) (*models.Building, error) {
-	err := building.Upsert(
+
+	// Start transaction
+	tx, err := repo.DB.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, fmt.Errorf("could not start transaction: %w", err)
+	}
+
+	// Track if we need to rollback
+	var shouldRollback = true
+	defer func() {
+		if shouldRollback {
+			_ = tx.Rollback()
+		}
+	}()
+
+	// Create or update apartment
+	if err := building.Upsert(
 		ctx,
-		repo.DB, 
+		tx,
 		true,
 		[]string{"id"},
-		boil.Whitelist("name", "address", "updated_at"),
 		boil.Infer(),
-	)
-	if err != nil {
+		boil.Infer(),
+	); err != nil {
 		return nil, fmt.Errorf("failed to upsert building: %w", err)
 	}
 
-	updatedBuilding, err := models.Buildings(models.BuildingWhere.ID.EQ(building.ID)).One(ctx, repo.DB)
+	updatedBuilding, err := models.Buildings(models.BuildingWhere.ID.EQ(building.ID)).One(ctx, tx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch upserted building: %w", err)
 	}
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
+		return nil, fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
+	// Mark that we committed successfully
+	shouldRollback = false
 
 	return updatedBuilding, nil
 }

@@ -1,0 +1,68 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "gnetId": null,
+    "graphTooltip": 0,
+    "id": null,
+    "panels": [
+      {
+        "type": "stat",
+        "title": "Apartments Created",
+        "targets": [
+          {
+            "expr": "apartment_created_total",
+            "refId": "A"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 },
+        "datasource": "Prometheus"
+      },
+      {
+        "type": "timeseries",
+        "title": "Total HTTP Requests",
+        "targets": [
+          {
+            "expr": "sum by (method, path) (http_requests_total)",
+            "refId": "A"
+          }
+        ],
+        "gridPos": { "x": 6, "y": 0, "w": 12, "h": 8 },
+        "datasource": "Prometheus"
+      },
+      {
+        "type": "barchart",
+        "title": "HTTP Errors by Status",
+        "targets": [
+          {
+            "expr": "sum by (status) (http_errors_total)",
+            "refId": "A"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 4, "w": 6, "h": 6 },
+        "datasource": "Prometheus"
+      },
+      {
+        "type": "heatmap",
+        "title": "Request Duration Histogram",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, method))",
+            "refId": "A"
+          }
+        ],
+        "gridPos": { "x": 6, "y": 8, "w": 12, "h": 10 },
+        "datasource": "Prometheus"
+      }
+    ],
+    "schemaVersion": 36,
+    "title": "Building Management API Metrics",
+    "version": 1
+  }
+  

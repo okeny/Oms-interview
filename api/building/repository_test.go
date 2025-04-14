@@ -131,106 +131,129 @@ func checkError(t *testing.T, err error, expectedMsg string) {
 	}
 }
 
-func TestRepository_CreateOrUpdateBuilding(t *testing.T) {
+func TestCreateOrUpdateBuilding(t *testing.T) {
 	db, mock, cleanup := setupTestDB(t)
 	defer cleanup()
 
-	repo := Repository{DB: db} // Assuming NewRepository returns Repository{DB: db}
+	repo := NewRepository(db)
 	ctx := context.Background()
 
 	tests := []struct {
 		name           string
 		building       models.Building
-		mockSetup      func(sqlmock.Sqlmock)
+		mockSetup      func(mock sqlmock.Sqlmock)
 		expectedResult *models.Building
 		expectedErrMsg string
 	}{
 		{
 			name: "Success - insert new building",
 			building: models.Building{
-				ID:      0, // New building, ID assigned by DB
-				Name:    "Test Building",
-				Address: "123 Main St",
+				ID:      0,
+				Name:    "New Tower",
+				Address: "123 Sky Ave",
 			},
 			mockSetup: func(mock sqlmock.Sqlmock) {
-				// Insert without id for new building
-				mock.ExpectQuery(`INSERT INTO "building" \("name",\s*"address",\s*"created_at",\s*"updated_at"\) VALUES \(\$1,\s*\$2,\s*\$3,\s*\$4\) ON CONFLICT \("id"\) DO UPDATE SET "name"\s*=\s*EXCLUDED\."name",\s*"address"\s*=\s*EXCLUDED\."address",\s*"updated_at"\s*=\s*EXCLUDED\."updated_at" RETURNING "id",\s*"created_at"`).
-					WithArgs("Test Building", "123 Main St", sqlmock.AnyArg(), sqlmock.AnyArg()).
-					WillReturnRows(sqlmock.NewRows([]string{"id", "created_at"}).
-						AddRow(11, time.Now())) // Next ID after sample data
-				// Fetch with returned ID
-				rows := sqlmock.NewRows([]string{"id", "name", "address", "created_at", "updated_at"}).
-					AddRow(11, "Test Building", "123 Main St", time.Now(), time.Now())
-				mock.ExpectQuery(`SELECT "building"\.\* FROM "building" WHERE \("building"\."id"\s*=\s*\$1\) LIMIT 1`).
-					WithArgs(11).
-					WillReturnRows(rows)
+				mock.ExpectBegin()
+				mock.ExpectQuery(`INSERT INTO "building" .* ON CONFLICT \("id"\) DO UPDATE SET .* RETURNING "id"`).
+					WithArgs("New Tower", "123 Sky Ave", sqlmock.AnyArg(), sqlmock.AnyArg()).
+					WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(10))
+
+				mock.ExpectQuery(`SELECT "building"\.\* FROM "building" WHERE \("building"\."id" = \$1\) LIMIT 1`).
+					WithArgs(10).
+					WillReturnRows(sqlmock.NewRows([]string{
+						"id", "name", "address", "created_at", "updated_at",
+					}).AddRow(10, "New Tower", "123 Sky Ave", time.Now(), time.Now()))
+
+				mock.ExpectCommit()
 			},
-			expectedResult: &models.Building{
-				ID:      11,
-				Name:    "Test Building",
-				Address: "123 Main St",
-			},
-			expectedErrMsg: "",
+			expectedResult: &models.Building{ID: 10, Name: "New Tower", Address: "123 Sky Ave"},
 		},
 		{
 			name: "Success - update existing building",
 			building: models.Building{
 				ID:      1,
-				Name:    "Updated Towers",
-				Address: "456 New Ave",
+				Name:    "Main Block",
+				Address: "1 Main St",
 			},
 			mockSetup: func(mock sqlmock.Sqlmock) {
-				// Update with id
-				mock.ExpectQuery(`INSERT INTO "building" \("id",\s*"name",\s*"address",\s*"created_at",\s*"updated_at"\) VALUES \(\$1,\s*\$2,\s*\$3,\s*\$4,\s*\$5\) ON CONFLICT \("id"\) DO UPDATE SET "name"\s*=\s*EXCLUDED\."name",\s*"address"\s*=\s*EXCLUDED\."address",\s*"updated_at"\s*=\s*EXCLUDED\."updated_at" RETURNING "id",\s*"created_at"`).
-					WithArgs(1, "Updated Towers", "456 New Ave", sqlmock.AnyArg(), sqlmock.AnyArg()).
-					WillReturnRows(sqlmock.NewRows([]string{"id", "created_at"}).
-						AddRow(1, time.Now()))
-				rows := sqlmock.NewRows([]string{"id", "name", "address", "created_at", "updated_at"}).
-					AddRow(1, "Updated Towers", "456 New Ave", time.Now(), time.Now())
-				mock.ExpectQuery(`SELECT "building"\.\* FROM "building" WHERE \("building"\."id"\s*=\s*\$1\) LIMIT 1`).
+				mock.ExpectBegin()
+				mock.ExpectQuery(`INSERT INTO "building" .* ON CONFLICT \("id"\) DO UPDATE SET .* RETURNING "id"`).
+					WithArgs(1,"Main Block", "1 Main St", sqlmock.AnyArg(), sqlmock.AnyArg()).
+					WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(1))
+
+				mock.ExpectQuery(`SELECT "building"\.\* FROM "building" WHERE \("building"\."id" = \$1\) LIMIT 1`).
 					WithArgs(1).
-					WillReturnRows(rows)
+					WillReturnRows(sqlmock.NewRows([]string{
+						"id", "name", "address", "created_at", "updated_at",
+					}).AddRow(1, "Main Block", "1 Main St", time.Now(), time.Now()))
+
+				mock.ExpectCommit()
 			},
-			expectedResult: &models.Building{
-				ID:      1,
-				Name:    "Updated Towers",
-				Address: "456 New Ave",
-			},
-			expectedErrMsg: "",
+			expectedResult: &models.Building{ID: 1, Name: "Main Block", Address: "1 Main St"},
 		},
 		{
 			name: "Error - upsert fails",
 			building: models.Building{
-				ID:      1,
-				Name:    "Test Building",
-				Address: "123 Main St",
+				ID:      2,
+				Name:    "Fail Block",
+				Address: "404 Error Rd",
 			},
 			mockSetup: func(mock sqlmock.Sqlmock) {
-				mock.ExpectQuery(`INSERT INTO "building" \("id",\s*"name",\s*"address",\s*"created_at",\s*"updated_at"\) VALUES \(\$1,\s*\$2,\s*\$3,\s*\$4,\s*\$5\) ON CONFLICT \("id"\) DO UPDATE SET "name"\s*=\s*EXCLUDED\."name",\s*"address"\s*=\s*EXCLUDED\."address",\s*"updated_at"\s*=\s*EXCLUDED\."updated_at" RETURNING "id",\s*"created_at"`).
-					WithArgs(1, "Test Building", "123 Main St", sqlmock.AnyArg(), sqlmock.AnyArg()).
-					WillReturnError(errors.New("upsert error"))
+				mock.ExpectBegin()
+				mock.ExpectQuery(`INSERT INTO "building" .* ON CONFLICT \("id"\) DO UPDATE SET .* RETURNING "id"`).
+					WithArgs(2,"Fail Block", "404 Error Rd", sqlmock.AnyArg(), sqlmock.AnyArg()).
+					WillReturnError(errors.New("upsert failure"))
+
+				mock.ExpectRollback()
 			},
 			expectedResult: nil,
 			expectedErrMsg: "failed to upsert building",
 		},
 		{
-			name: "Error - fetch upserted building fails",
+			name: "Error - fetch fails after upsert",
 			building: models.Building{
-				ID:      1,
-				Name:    "Test Building",
-				Address: "123 Main St",
+				ID:      3,
+				Name:    "Post Tower",
+				Address: "500 Server Ln",
 			},
 			mockSetup: func(mock sqlmock.Sqlmock) {
-				mock.ExpectQuery(`INSERT INTO "building" \("id",\s*"name",\s*"address",\s*"created_at",\s*"updated_at"\) VALUES \(\$1,\s*\$2,\s*\$3,\s*\$4,\s*\$5\) ON CONFLICT \("id"\) DO UPDATE SET "name"\s*=\s*EXCLUDED\."name",\s*"address"\s*=\s*EXCLUDED\."address",\s*"updated_at"\s*=\s*EXCLUDED\."updated_at" RETURNING "id",\s*"created_at"`).
-					WithArgs(1, "Test Building", "123 Main St", sqlmock.AnyArg(), sqlmock.AnyArg()).
-					WillReturnRows(sqlmock.NewRows([]string{"id", "created_at"}).
-						AddRow(1, time.Now()))
-				mock.ExpectQuery(`SELECT "building"\.\* FROM "building" WHERE \("building"\."id"\s*=\s*\$1\) LIMIT 1`).
-					WithArgs(1).
+				mock.ExpectBegin()
+				mock.ExpectQuery(`INSERT INTO "building" .* ON CONFLICT \("id"\) DO UPDATE SET .* RETURNING "id"`).
+					WithArgs(3,"Post Tower", "500 Server Ln", sqlmock.AnyArg(), sqlmock.AnyArg()).
+					WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(3))
+
+				mock.ExpectQuery(`SELECT "building"\.\* FROM "building" WHERE \("building"\."id" = \$1\) LIMIT 1`).
+					WithArgs(3).
 					WillReturnError(errors.New("fetch error"))
+
+				mock.ExpectRollback()
 			},
 			expectedResult: nil,
 			expectedErrMsg: "failed to fetch upserted building",
+		},
+		{
+			name: "Error - commit fails",
+			building: models.Building{
+				ID:      4,
+				Name:    "Commit Fail",
+				Address: "999 Commit Way",
+			},
+			mockSetup: func(mock sqlmock.Sqlmock) {
+				mock.ExpectBegin()
+				mock.ExpectQuery(`INSERT INTO "building" .* ON CONFLICT \("id"\) DO UPDATE SET .* RETURNING "id"`).
+					WithArgs(4,"Commit Fail", "999 Commit Way", sqlmock.AnyArg(), sqlmock.AnyArg()).
+					WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(4))
+
+				mock.ExpectQuery(`SELECT "building"\.\* FROM "building" WHERE \("building"\."id" = \$1\) LIMIT 1`).
+					WithArgs(4).
+					WillReturnRows(sqlmock.NewRows([]string{
+						"id", "name", "address", "created_at", "updated_at",
+					}).AddRow(4, "Commit Fail", "999 Commit Way", time.Now(), time.Now()))
+
+				mock.ExpectCommit().WillReturnError(errors.New("commit error"))
+			},
+			expectedResult: nil,
+			expectedErrMsg: "failed to commit transaction",
 		},
 	}
 
@@ -239,26 +262,23 @@ func TestRepository_CreateOrUpdateBuilding(t *testing.T) {
 			tt.mockSetup(mock)
 			result, err := repo.CreateOrUpdateBuilding(ctx, tt.building)
 
-			// Compare results
 			if tt.expectedResult != nil && result != nil {
 				assert.Equal(t, tt.expectedResult.ID, result.ID)
 				assert.Equal(t, tt.expectedResult.Name, result.Name)
 				assert.Equal(t, tt.expectedResult.Address, result.Address)
-				// Note: created_at and updated_at are set by DB, so we skip exact comparison
 			} else {
-				assert.Nil(t, result, "expected nil result, got %+v", result)
+				assert.Nil(t, result)
 			}
 
-			// Compare errors using checkError helper
 			checkError(t, err, tt.expectedErrMsg)
 
-			// Check for unmet expectations
 			if err := mock.ExpectationsWereMet(); err != nil {
-				t.Errorf("there were unmet expectations: %v", err)
+				t.Errorf("unmet expectations: %v", err)
 			}
 		})
 	}
 }
+
 func TestRepository_DeleteBuilding(t *testing.T) {
 	db, mock, cleanup := setupTestDB(t)
 	defer cleanup()
