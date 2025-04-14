@@ -32,7 +32,7 @@ func NewClient() (*sql.DB, error) {
 	db.SetMaxIdleConns(10)
 	db.SetMaxOpenConns(100)
 	db.SetConnMaxLifetime(time.Hour)
-	
+
 	log.Println("Successfully connected to database!")
 	return db, nil
 }

@@ -1,8 +1,8 @@
 package apartment
 
 import (
+	ap "building_management/interfaces/api/apartment"
 	"building_management/mocks/interfaces/api/apartment"
-	 ap "building_management/interfaces/api/apartment"
 
 	"building_management/models"
 	"context"

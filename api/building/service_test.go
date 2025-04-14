@@ -1,8 +1,8 @@
 package building
 
 import (
+	b "building_management/interfaces/api/building"
 	"building_management/mocks/interfaces/api/building"
-	 b "building_management/interfaces/api/building"
 
 	"building_management/models"
 	"context"
@@ -12,6 +12,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
+
 // TestService_GetBuildings tests the GetBuildings method of the Service struct
 func TestService_GetBuildings(t *testing.T) {
 	ctrl := gomock.NewController(t)

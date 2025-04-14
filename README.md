@@ -151,6 +151,14 @@ go run main.go migrations status
 
 Run all tests:
 
+formating code
+```bash
+gofmt -s -w .
+```
+Running golinter 
+```bash
+ golangci-lint run
+```
 ```bash
 go test ./... -v
 ```

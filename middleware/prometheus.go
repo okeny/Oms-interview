@@ -2,9 +2,9 @@
 package middleware
 
 import (
+	"building_management/metrics"
 	"strconv"
 	"time"
-	"building_management/metrics"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/prometheus/client_golang/prometheus"

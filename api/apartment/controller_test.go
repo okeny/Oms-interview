@@ -149,13 +149,13 @@ func TestController_GetApartmentByID(t *testing.T) {
 
 			req := httptest.NewRequest("GET", tt.url, nil)
 			resp, err := app.Test(req)
-			if assert.NoError(t, err){
+			if assert.NoError(t, err) {
 				assert.Equal(t, tt.expectedCode, resp.StatusCode)
 
 				bodyBytes, _ := io.ReadAll(resp.Body)
 				body, _ := json.MarshalIndent(json.RawMessage(tt.expectedBody), "", "  ")
 				assert.JSONEq(t, string(body), string(bodyBytes))
-			}			
+			}
 		})
 	}
 }
@@ -199,7 +199,7 @@ func TestController_GetApartmentsByBuilding(t *testing.T) {
 			name: "Error - no apartments found",
 			url:  "/buildings/2/apartments",
 			mockSetup: func() {
-				mockHandler.EXPECT().GetID(gomock.Any()).Return(2, nil) // Ensure GetID is mocked for this test case as well
+				mockHandler.EXPECT().GetID(gomock.Any()).Return(2, nil)                        // Ensure GetID is mocked for this test case as well
 				mockService.EXPECT().GetApartmentsByBuilding(gomock.Any(), 2).Return(nil, nil) // No apartments found
 			},
 			expectedCode: fiber.StatusNotFound,
@@ -223,7 +223,7 @@ func TestController_GetApartmentsByBuilding(t *testing.T) {
 
 			req := httptest.NewRequest("GET", tt.url, nil)
 			resp, err := app.Test(req)
-			if assert.NoError(t, err){
+			if assert.NoError(t, err) {
 
 				assert.Equal(t, tt.expectedCode, resp.StatusCode)
 
@@ -299,7 +299,7 @@ func TestController_CreateOrUpdateApartment(t *testing.T) {
 			req := httptest.NewRequest("POST", "/apartments", strings.NewReader(tt.body))
 			req.Header.Set("Content-Type", "application/json")
 			resp, err := app.Test(req)
-			if assert.NoError(t, err){
+			if assert.NoError(t, err) {
 				assert.Equal(t, tt.expectedCode, resp.StatusCode)
 				bodyBytes, _ := io.ReadAll(resp.Body)
 				body, _ := json.MarshalIndent(json.RawMessage(tt.expectedBody), "", "  ")
@@ -360,7 +360,7 @@ func TestController_DeleteApartment(t *testing.T) {
 
 			req := httptest.NewRequest("DELETE", tt.url, nil)
 			resp, err := app.Test(req)
-			if assert.NoError(t, err){
+			if assert.NoError(t, err) {
 
 				assert.Equal(t, tt.expectedCode, resp.StatusCode)
 				bodyBytes, _ := io.ReadAll(resp.Body)

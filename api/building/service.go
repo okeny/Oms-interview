@@ -1,9 +1,9 @@
 package building
 
 import (
+	"building_management/interfaces/api/building"
 	"building_management/models"
 	"context"
-	"building_management/interfaces/api/building"
 )
 
 type Service struct {
@@ -33,6 +33,7 @@ func (s Service) GetBuildingByID(ctx context.Context, ID int) (*models.Building,
 	}
 	return building, nil
 }
+
 // Create or update building
 func (s Service) CreateOrUpdateBuilding(ctx context.Context, request building.BuildingRequest) (*models.Building, error) {
 	buildingModel := mapBuildingRequestToModel(request)

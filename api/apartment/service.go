@@ -5,6 +5,7 @@ import (
 	"building_management/models"
 	"context"
 )
+
 type Service struct {
 	repo apartment.RepositoryInterface
 }
@@ -45,11 +46,11 @@ func (s Service) GetApartmentsByBuilding(ctx context.Context,
 }
 
 // Create or update apartment
-func (s Service) CreateOrUpdateApartment(ctx context.Context, 
+func (s Service) CreateOrUpdateApartment(ctx context.Context,
 	request apartment.ApartmentRequest) (*models.Apartment, error) {
-	      
+
 	apartmentModel := mapApartmentRequestToModel(request)
- 	apart, err := s.repo.CreateOrUpdateApartment(ctx, apartmentModel);
+	apart, err := s.repo.CreateOrUpdateApartment(ctx, apartmentModel)
 	if err != nil {
 		return &models.Apartment{}, err
 	}
@@ -63,4 +64,3 @@ func (s Service) DeleteApartment(ctx context.Context, id int) error {
 	}
 	return nil
 }
-

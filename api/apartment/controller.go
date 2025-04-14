@@ -2,8 +2,8 @@ package apartment
 
 import (
 	"building_management/interfaces/api/apartment"
-	"errors"
 	"building_management/metrics"
+	"errors"
 
 	"github.com/gofiber/fiber/v2"
 )

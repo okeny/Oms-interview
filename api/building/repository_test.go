@@ -178,7 +178,7 @@ func TestCreateOrUpdateBuilding(t *testing.T) {
 			mockSetup: func(mock sqlmock.Sqlmock) {
 				mock.ExpectBegin()
 				mock.ExpectQuery(`INSERT INTO "building" .* ON CONFLICT \("id"\) DO UPDATE SET .* RETURNING "id"`).
-					WithArgs(1,"Main Block", "1 Main St", sqlmock.AnyArg(), sqlmock.AnyArg()).
+					WithArgs(1, "Main Block", "1 Main St", sqlmock.AnyArg(), sqlmock.AnyArg()).
 					WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(1))
 
 				mock.ExpectQuery(`SELECT "building"\.\* FROM "building" WHERE \("building"\."id" = \$1\) LIMIT 1`).
@@ -201,7 +201,7 @@ func TestCreateOrUpdateBuilding(t *testing.T) {
 			mockSetup: func(mock sqlmock.Sqlmock) {
 				mock.ExpectBegin()
 				mock.ExpectQuery(`INSERT INTO "building" .* ON CONFLICT \("id"\) DO UPDATE SET .* RETURNING "id"`).
-					WithArgs(2,"Fail Block", "404 Error Rd", sqlmock.AnyArg(), sqlmock.AnyArg()).
+					WithArgs(2, "Fail Block", "404 Error Rd", sqlmock.AnyArg(), sqlmock.AnyArg()).
 					WillReturnError(errors.New("upsert failure"))
 
 				mock.ExpectRollback()
@@ -219,7 +219,7 @@ func TestCreateOrUpdateBuilding(t *testing.T) {
 			mockSetup: func(mock sqlmock.Sqlmock) {
 				mock.ExpectBegin()
 				mock.ExpectQuery(`INSERT INTO "building" .* ON CONFLICT \("id"\) DO UPDATE SET .* RETURNING "id"`).
-					WithArgs(3,"Post Tower", "500 Server Ln", sqlmock.AnyArg(), sqlmock.AnyArg()).
+					WithArgs(3, "Post Tower", "500 Server Ln", sqlmock.AnyArg(), sqlmock.AnyArg()).
 					WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(3))
 
 				mock.ExpectQuery(`SELECT "building"\.\* FROM "building" WHERE \("building"\."id" = \$1\) LIMIT 1`).
@@ -241,7 +241,7 @@ func TestCreateOrUpdateBuilding(t *testing.T) {
 			mockSetup: func(mock sqlmock.Sqlmock) {
 				mock.ExpectBegin()
 				mock.ExpectQuery(`INSERT INTO "building" .* ON CONFLICT \("id"\) DO UPDATE SET .* RETURNING "id"`).
-					WithArgs(4,"Commit Fail", "999 Commit Way", sqlmock.AnyArg(), sqlmock.AnyArg()).
+					WithArgs(4, "Commit Fail", "999 Commit Way", sqlmock.AnyArg(), sqlmock.AnyArg()).
 					WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(4))
 
 				mock.ExpectQuery(`SELECT "building"\.\* FROM "building" WHERE \("building"\."id" = \$1\) LIMIT 1`).

@@ -226,50 +226,50 @@ func TestController_CreateOrUpdateBuilding(t *testing.T) {
 }
 
 func TestController_DeleteBuilding(t *testing.T) {
-    ctrl := gomock.NewController(t)
-    defer ctrl.Finish()
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 
-    controller, app, mockService, _ := SetUp(ctrl)
-    app.Delete("/buildings/:id", controller.DeleteBuilding)
+	controller, app, mockService, _ := SetUp(ctrl)
+	app.Delete("/buildings/:id", controller.DeleteBuilding)
 
-    tests := []struct {
-        name         string
-        mockSetup    func()
-        expectedCode int
-        expectedBody string
-    }{
-        {
-            name: "Success - building deleted",
-            mockSetup: func() {
-                mockService.EXPECT().DeleteBuilding(gomock.Any(), gomock.Any()).Return(nil)
-            },
-            expectedCode: fiber.StatusOK,
-            expectedBody: `{"message":"Building deleted"}`, // Make sure this matches the response
-        },
-        {
-            name: "Error - building not found",
-            mockSetup: func() {
-                mockService.EXPECT().DeleteBuilding(gomock.Any(), gomock.Any()).Return(errors.New("building not found"))
-            },
-            expectedCode: fiber.StatusNotFound,
-            expectedBody: `{"error":"building not found"}`,
-        },
-    }
+	tests := []struct {
+		name         string
+		mockSetup    func()
+		expectedCode int
+		expectedBody string
+	}{
+		{
+			name: "Success - building deleted",
+			mockSetup: func() {
+				mockService.EXPECT().DeleteBuilding(gomock.Any(), gomock.Any()).Return(nil)
+			},
+			expectedCode: fiber.StatusOK,
+			expectedBody: `{"message":"Building deleted"}`, // Make sure this matches the response
+		},
+		{
+			name: "Error - building not found",
+			mockSetup: func() {
+				mockService.EXPECT().DeleteBuilding(gomock.Any(), gomock.Any()).Return(errors.New("building not found"))
+			},
+			expectedCode: fiber.StatusNotFound,
+			expectedBody: `{"error":"building not found"}`,
+		},
+	}
 
-    for _, tt := range tests {
-        t.Run(tt.name, func(t *testing.T) {
-            tt.mockSetup()
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.mockSetup()
 
-            req := httptest.NewRequest("DELETE", "/buildings/1", nil)
-            resp, err := app.Test(req)
-            assert.NoError(t, err)
+			req := httptest.NewRequest("DELETE", "/buildings/1", nil)
+			resp, err := app.Test(req)
+			assert.NoError(t, err)
 
-            // Check response status code
-            assert.Equal(t, tt.expectedCode, resp.StatusCode)
+			// Check response status code
+			assert.Equal(t, tt.expectedCode, resp.StatusCode)
 
-            // Read the response body
-            bodyBytes, _ := io.ReadAll(resp.Body)
-            assert.JSONEq(t, tt.expectedBody, string(bodyBytes))
-        })
-    }
+			// Read the response body
+			bodyBytes, _ := io.ReadAll(resp.Body)
+			assert.JSONEq(t, tt.expectedBody, string(bodyBytes))
+		})
+	}
 }
