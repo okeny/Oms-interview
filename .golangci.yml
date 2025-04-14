@@ -2,13 +2,14 @@
 run:
   timeout: 2m
   tests: true
-  skip-dirs:
-    - k8s
+  issues:
+    exclude-dirs:
+      - k8s
 
 linters:
   disable-all: true
   enable:
-    - deadcode
+    - unused
     - errcheck
     - gocritic
     - gofmt

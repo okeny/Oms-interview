@@ -359,7 +359,7 @@ func TestController_DeleteApartment(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.mockSetup()
 
-			req := httptest.NewRequest("DELETE", tt.url, nil)
+			req := httptest.NewRequest("DELETE", tt.url, http.NoBody)
 			resp, err := app.Test(req)
 			if assert.NoError(t, err) {
 

@@ -112,7 +112,7 @@ func runStatusCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "status",
 		Short: "create a new migration using migrate CLI",
-		Run: func(_ *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			dbClient, err := database.NewClient()
 			if err != nil {
 				log.Fatalln(err)
