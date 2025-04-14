@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
@@ -70,7 +71,7 @@ func TestController_GetApartments(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.mockSetup()
 
-			req := httptest.NewRequest("GET", "/apartments", nil)
+			req := httptest.NewRequest("GET", "/apartments", http.NoBody)
 			resp, err := app.Test(req)
 			if assert.NoError(t, err) {
 				assert.Equal(t, tt.expectedCode, resp.StatusCode)
@@ -147,7 +148,7 @@ func TestController_GetApartmentByID(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.mockSetup()
 
-			req := httptest.NewRequest("GET", tt.url, nil)
+			req := httptest.NewRequest("GET", tt.url, http.NoBody)
 			resp, err := app.Test(req)
 			if assert.NoError(t, err) {
 				assert.Equal(t, tt.expectedCode, resp.StatusCode)
@@ -221,7 +222,7 @@ func TestController_GetApartmentsByBuilding(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.mockSetup()
 
-			req := httptest.NewRequest("GET", tt.url, nil)
+			req := httptest.NewRequest("GET", tt.url, http.NoBody)
 			resp, err := app.Test(req)
 			if assert.NoError(t, err) {
 

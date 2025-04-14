@@ -18,7 +18,7 @@ func API() *cobra.Command {
 	return &cobra.Command{
 		Use:   "api",
 		Short: "Start BMS in API mode",
-		Run: func(_ *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			runAPI()
 		},
 	}

@@ -95,8 +95,8 @@ func (repo Repository) CreateOrUpdateApartment(ctx context.Context, apartment mo
 }
 
 // Delete apartment by ID
-func (repo Repository) DeleteApartment(ctx context.Context, ID int) error {
-	apartment := models.Apartment{ID: ID}
+func (repo Repository) DeleteApartment(ctx context.Context, id int) error {
+	apartment := models.Apartment{ID: id}
 	n, err := apartment.Delete(ctx, repo.DB)
 	if err != nil {
 		return err

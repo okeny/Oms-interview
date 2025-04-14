@@ -26,8 +26,8 @@ func (s Service) GetApartments(ctx context.Context) (models.ApartmentSlice, erro
 }
 
 // Get apartment by ID
-func (s Service) GetApartmentByID(ctx context.Context, ID int) (*models.Apartment, error) {
-	apartment, err := s.repo.GetApartmentByID(ctx, ID)
+func (s Service) GetApartmentByID(ctx context.Context, id int) (*models.Apartment, error) {
+	apartment, err := s.repo.GetApartmentByID(ctx, id)
 	if err != nil {
 		return apartment, err
 	}

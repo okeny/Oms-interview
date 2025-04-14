@@ -33,7 +33,7 @@ func runUpCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "up",
 		Short: "Apply all up migrations",
-		Run: func(_ *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 
 			dbClient, err := database.NewClient()
 			if err != nil {
@@ -57,7 +57,7 @@ func runDownCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "down",
 		Short: "run migrations down",
-		Run: func(_ *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, _ []string) {
 			// Connect to the database
 			dbClient, err := database.NewClient()
 			if err != nil {
@@ -81,7 +81,7 @@ func runCreateCmd() *cobra.Command {
 		Use:   "create [name]",
 		Short: "Create a new SQL migration file",
 		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, args []string) error {
 			name := args[0]
 			timestamp := time.Now().Format("20060102150405")
 			filename := fmt.Sprintf("%s_%s.sql", timestamp, name)
@@ -91,11 +91,11 @@ func runCreateCmd() *cobra.Command {
 
 -- +migrate Down
 `
-			if err := os.MkdirAll(migrationDir, 0755); err != nil {
+			if err := os.MkdirAll(migrationDir, 0o755); err != nil {
 				return fmt.Errorf("failed to create migration directory: %w", err)
 			}
 
-			if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+			if err := os.WriteFile(path, []byte(content), 0o644); err != nil {
 				return fmt.Errorf("failed to write migration file: %w", err)
 			}
 
@@ -112,7 +112,7 @@ func runStatusCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "status",
 		Short: "create a new migration using migrate CLI",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, args []string) {
 			dbClient, err := database.NewClient()
 			if err != nil {
 				log.Fatalln(err)
