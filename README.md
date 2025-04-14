@@ -179,8 +179,6 @@ mockgen -source=interfaces/api/building/repository.go \
   -package=building
 ```
 
----
-
 ## 🔄 SQLBoiler Model Generation
 
 ```bash
