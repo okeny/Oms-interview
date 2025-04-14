@@ -90,7 +90,7 @@ jobs:
         run: |
           git fetch origin master
           git checkout master
-          git merge --no-ff origin/main -m "Auto-merge main into master"
+          git merge origin/main --allow-unrelated-histories -m "Auto-merge main into master"
           git push origin master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
