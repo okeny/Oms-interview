@@ -24,9 +24,9 @@ services:
     networks:
       - building_management_network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:8000/health"]
       interval: 10s
-      timeout: 5s
+      timeout: 20s
       retries: 5
 
   db:
