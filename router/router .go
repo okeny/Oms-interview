@@ -6,8 +6,10 @@ import (
 	"building_management/config"
 	"building_management/middleware"
 	"database/sql"
-	"log"
+	"fmt"
 	"net/http"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -24,11 +26,16 @@ func Init(db *sql.DB) (*fiber.App, error) {
 	// Add CORS middleware
 	app.Use(middleware.HandleCorsMiddleware())
 
+	prometheusPort, err := config.Get("PROMETHEUS_PORT")
+	if err != nil {
+		log.WithError(err).Fatal("Failed to get port from config")
+	}
+
 	// Add Prometheus custom middleware
 	go func() {
 		http.Handle("/metrics", promhttp.Handler())
-		log.Println("Prometheus metrics available at :2112/metrics")
-		if err := http.ListenAndServe(":2112", nil); err != nil {
+		log.Printf("Prometheus metrics available at :%s/metrics",prometheusPort)
+		if err := http.ListenAndServe(fmt.Sprintf(":%s",prometheusPort), nil); err != nil {
 			log.Fatal("Metrics server failed:", err)
 		}
 	}()
