@@ -34,8 +34,8 @@ func Init(db *sql.DB) (*fiber.App, error) {
 	// Add Prometheus custom middleware
 	go func() {
 		http.Handle("/metrics", promhttp.Handler())
-		log.Printf("Prometheus metrics available at :%s/metrics",prometheusPort)
-		if err := http.ListenAndServe(fmt.Sprintf(":%s",prometheusPort), nil); err != nil {
+		log.Printf("Prometheus metrics available at :%s/metrics", prometheusPort)
+		if err := http.ListenAndServe(fmt.Sprintf(":%s", prometheusPort), nil); err != nil {
 			log.Fatal("Metrics server failed:", err)
 		}
 	}()
