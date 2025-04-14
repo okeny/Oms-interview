@@ -86,17 +86,22 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
 
-      - name: Attempt to Merge main into master
+      - name: Try merging main into master
+        id: merge
         run: |
           git fetch origin
-          git checkout master
-          git merge origin/main --no-ff --allow-unrelated-histories -m "Auto-merge main into master" || {
-            echo "❌ Merge conflict detected. Manual resolution required."
-            exit 1
-          }
+          git checkout -b master origin/master
+          git merge origin/main --no-ff --allow-unrelated-histories -m "Auto-merge main into master" || echo "conflict" > conflict.txt
 
-      - name: Push merged changes
-        if: success()
-        run: git push origin master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create pull request if conflict
+        if: ${{ success() && steps.merge.outcome == 'success' && hashFiles('conflict.txt') != '' }}
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: master
+          branch: main
+          title: "🔀 Auto PR: Merge main into master"
+          body: |
+            ⚠️ Merge conflict detected in `README.md` or other files.
+            This PR was created automatically. Please review and resolve the conflict manually.
+          draft: false
