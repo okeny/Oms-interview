@@ -23,11 +23,6 @@ services:
       - DB_SSLMODE=disable
     networks:
       - building_management_network
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:8000/health"]
-      interval: 10s
-      timeout: 20s
-      retries: 5
 
   db:
     image: postgres:16
@@ -55,9 +50,6 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
-    depends_on:
-      api:
-        condition: service_healthy
     networks:
       - building_management_network
 
