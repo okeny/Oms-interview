@@ -20,11 +20,11 @@ func (h Handler) GetID(c *fiber.Ctx) (int, error) {
 	return id, nil
 }
 
-func (h Handler) GetCreateOrUpdateRequest(c *fiber.Ctx) (building.BuildingRequest, error) {
-	var request building.BuildingRequest
+func (h Handler) GetCreateOrUpdateRequest(c *fiber.Ctx) (building.Request, error) {
+	var request building.Request
 	// Parse request body into apartment struct
 	if err := c.BodyParser(&request); err != nil {
-		return building.BuildingRequest{}, err
+		return building.Request{}, err
 	}
 	return request, nil
 }

@@ -36,10 +36,10 @@ func (m *MockHandlerInterface) EXPECT() *MockHandlerInterfaceMockRecorder {
 }
 
 // GetCreateOrUpdateRequest mocks base method.
-func (m *MockHandlerInterface) GetCreateOrUpdateRequest(c *fiber.Ctx) (building.BuildingRequest, error) {
+func (m *MockHandlerInterface) GetCreateOrUpdateRequest(c *fiber.Ctx) (building.Request, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCreateOrUpdateRequest", c)
-	ret0, _ := ret[0].(building.BuildingRequest)
+	ret0, _ := ret[0].(building.Request)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

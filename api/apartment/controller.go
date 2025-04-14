@@ -51,12 +51,12 @@ func (ctl Controller) GetApartmentByID(c *fiber.Ctx) error {
 
 // Get all apartments in a specific building
 func (ctl Controller) GetApartmentsByBuilding(c *fiber.Ctx) error {
-	buildingId, err := ctl.handler.GetID(c)
+	buildingID, err := ctl.handler.GetID(c)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid building ID"})
 	}
 
-	apartments, err := ctl.service.GetApartmentsByBuilding(c.Context(), buildingId)
+	apartments, err := ctl.service.GetApartmentsByBuilding(c.Context(), buildingID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -80,7 +80,7 @@ func (ctl Controller) CreateOrUpdateApartment(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
-	// increment the appartment counter
+	// increment the apartment counter
 	if apartmentRequest.ID != 0 {
 		metrics.ApartmentCreatedCounter.Inc()
 	}

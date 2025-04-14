@@ -37,7 +37,7 @@ func (m *MockServiceInterface) EXPECT() *MockServiceInterfaceMockRecorder {
 }
 
 // CreateOrUpdateApartment mocks base method.
-func (m *MockServiceInterface) CreateOrUpdateApartment(ctx context.Context, apartment apartment.ApartmentRequest) (*models.Apartment, error) {
+func (m *MockServiceInterface) CreateOrUpdateApartment(ctx context.Context, apartment apartment.Request) (*models.Apartment, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateOrUpdateApartment", ctx, apartment)
 	ret0, _ := ret[0].(*models.Apartment)

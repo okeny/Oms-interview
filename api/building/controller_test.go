@@ -5,6 +5,7 @@ import (
 	"building_management/models"
 	"errors"
 	"io"
+	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
@@ -74,7 +75,7 @@ func TestController_GetBuildings(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.mockSetup()
 
-			req := httptest.NewRequest("GET", "/buildings", nil)
+			req := httptest.NewRequest("GET", "/buildings", http.NoBody)
 			resp, err := app.Test(req)
 			assert.NoError(t, err)
 
@@ -143,7 +144,7 @@ func TestController_GetBuildingByID(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.mockSetup()
 
-			req := httptest.NewRequest("GET", tt.url, nil)
+			req := httptest.NewRequest("GET", tt.url, http.NoBody)
 			resp, err := app.Test(req)
 			assert.NoError(t, err)
 
@@ -172,7 +173,7 @@ func TestController_CreateOrUpdateBuilding(t *testing.T) {
 			name: "Success - building created",
 			body: `{"name":"Building A"}`,
 			mockSetup: func() {
-				req := building.BuildingRequest{Name: "Building A"}
+				req := building.Request{Name: "Building A"}
 				mockHandler.EXPECT().GetCreateOrUpdateRequest(gomock.Any()).Return(req, nil)
 				mockService.EXPECT().CreateOrUpdateBuilding(gomock.Any(), req).
 					Return(&models.Building{ID: 1, Name: "Building A"}, nil)
@@ -190,7 +191,7 @@ func TestController_CreateOrUpdateBuilding(t *testing.T) {
 			name: "Error - invalid request",
 			body: `{"name":""}`,
 			mockSetup: func() {
-				mockHandler.EXPECT().GetCreateOrUpdateRequest(gomock.Any()).Return(building.BuildingRequest{}, errors.New("invalid request"))
+				mockHandler.EXPECT().GetCreateOrUpdateRequest(gomock.Any()).Return(building.Request{}, errors.New("invalid request"))
 			},
 			expectedCode: fiber.StatusBadRequest,
 			expectedBody: `{"error":"invalid request"}`,
@@ -199,7 +200,7 @@ func TestController_CreateOrUpdateBuilding(t *testing.T) {
 			name: "Error - service fails",
 			body: `{"name":"Building A"}`,
 			mockSetup: func() {
-				req := building.BuildingRequest{Name: "Building A"}
+				req := building.Request{Name: "Building A"}
 				mockHandler.EXPECT().GetCreateOrUpdateRequest(gomock.Any()).Return(req, nil)
 				mockService.EXPECT().CreateOrUpdateBuilding(gomock.Any(), req).
 					Return(nil, errors.New("upsert error"))
@@ -260,7 +261,7 @@ func TestController_DeleteBuilding(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.mockSetup()
 
-			req := httptest.NewRequest("DELETE", "/buildings/1", nil)
+			req := httptest.NewRequest("DELETE", "/buildings/1", http.NoBody)
 			resp, err := app.Test(req)
 			assert.NoError(t, err)
 

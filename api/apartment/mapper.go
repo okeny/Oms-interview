@@ -5,7 +5,7 @@ import (
 	"building_management/models"
 )
 
-func mapApartmentRequestToModel(request apartment.ApartmentRequest) models.Apartment {
+func mapApartmentRequestToModel(request apartment.Request) models.Apartment {
 	return models.Apartment{
 		ID:         request.ID,
 		BuildingID: request.BuildingID,

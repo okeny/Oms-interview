@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// SetupRoutes sets up the routes for the appartment controller
+// SetupRoutes sets up the routes for the apartment controller
 func ApartmentInitRoute(appv1 fiber.Router, controller apartment.Controller) {
 	// Define the routes for the building controller
 	apartments := appv1.Group("/apartments")

@@ -12,7 +12,7 @@ import (
 
 func init() {
 	// Register metrics
-	prometheus.MustRegister(metrics.HttpRequestsTotal)
+	prometheus.MustRegister(metrics.HTTPRequestsTotal)
 	// Register all metrics here
 	prometheus.MustRegister(metrics.ApartmentCreatedCounter)
 	prometheus.MustRegister(metrics.RequestDurationHistogram)

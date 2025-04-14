@@ -125,14 +125,14 @@ func TestService_CreateOrUpdateBuilding(t *testing.T) {
 
 	tests := []struct {
 		name           string
-		request        b.BuildingRequest
+		request        b.Request
 		mockSetup      func()
 		expectedResult *models.Building
 		expectedErr    error
 	}{
 		{
 			name: "Success - building created",
-			request: b.BuildingRequest{
+			request: b.Request{
 				ID:      0,
 				Name:    "Building B",
 				Address: "456 Oak St",
@@ -151,7 +151,7 @@ func TestService_CreateOrUpdateBuilding(t *testing.T) {
 		},
 		{
 			name: "Error - repository fails",
-			request: b.BuildingRequest{
+			request: b.Request{
 				ID:      0,
 				Name:    "Building C",
 				Address: "789 Pine St",

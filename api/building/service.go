@@ -26,8 +26,8 @@ func (s Service) GetBuildings(ctx context.Context) (models.BuildingSlice, error)
 }
 
 // Get building by ID
-func (s Service) GetBuildingByID(ctx context.Context, ID int) (*models.Building, error) {
-	building, err := s.repo.GetBuildingByID(ctx, ID)
+func (s Service) GetBuildingByID(ctx context.Context, id int) (*models.Building, error) {
+	building, err := s.repo.GetBuildingByID(ctx, id)
 	if err != nil {
 		return building, err
 	}
@@ -35,7 +35,7 @@ func (s Service) GetBuildingByID(ctx context.Context, ID int) (*models.Building,
 }
 
 // Create or update building
-func (s Service) CreateOrUpdateBuilding(ctx context.Context, request building.BuildingRequest) (*models.Building, error) {
+func (s Service) CreateOrUpdateBuilding(ctx context.Context, request building.Request) (*models.Building, error) {
 	buildingModel := mapBuildingRequestToModel(request)
 	build, err := s.repo.CreateOrUpdateBuilding(ctx, buildingModel)
 	if err != nil {

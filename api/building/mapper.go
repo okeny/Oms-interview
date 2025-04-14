@@ -5,7 +5,7 @@ import (
 	"building_management/models"
 )
 
-func mapBuildingRequestToModel(req building.BuildingRequest) models.Building {
+func mapBuildingRequestToModel(req building.Request) models.Building {
 	return models.Building{
 		ID:      req.ID,
 		Name:    req.Name,

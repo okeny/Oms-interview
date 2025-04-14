@@ -253,7 +253,7 @@ func TestController_CreateOrUpdateApartment(t *testing.T) {
 			name: "Success - apartment created",
 			body: `{"id":0,"building_id":1,"number":"A1","floor":1,"sq_meters":50}`,
 			mockSetup: func() {
-				req := apartment.ApartmentRequest{ID: 0, BuildingID: 1, Number: "A1", Floor: 1, SQMeters: 50}
+				req := apartment.Request{ID: 0, BuildingID: 1, Number: "A1", Floor: 1, SQMeters: 50}
 				mockHandler.EXPECT().GetCreateOrUpdateRequest(gomock.Any()).Return(req, nil)
 				mockService.EXPECT().CreateOrUpdateApartment(gomock.Any(), req).
 					Return(&models.Apartment{ID: 1, BuildingID: 1, Number: "A1", Floor: 1, SQMeters: 50}, nil)
@@ -273,7 +273,7 @@ func TestController_CreateOrUpdateApartment(t *testing.T) {
 			name: "Error - invalid request",
 			body: `{"id":"invalid"}`,
 			mockSetup: func() {
-				mockHandler.EXPECT().GetCreateOrUpdateRequest(gomock.Any()).Return(apartment.ApartmentRequest{}, errors.New("invalid request"))
+				mockHandler.EXPECT().GetCreateOrUpdateRequest(gomock.Any()).Return(apartment.Request{}, errors.New("invalid request"))
 			},
 			expectedCode: fiber.StatusBadRequest,
 			expectedBody: `{"error":"invalid request"}`,
@@ -282,7 +282,7 @@ func TestController_CreateOrUpdateApartment(t *testing.T) {
 			name: "Error - service fails",
 			body: `{"id":0,"building_id":1,"number":"A1"}`,
 			mockSetup: func() {
-				req := apartment.ApartmentRequest{ID: 0, BuildingID: 1, Number: "A1"}
+				req := apartment.Request{ID: 0, BuildingID: 1, Number: "A1"}
 				mockHandler.EXPECT().GetCreateOrUpdateRequest(gomock.Any()).Return(req, nil)
 				mockService.EXPECT().CreateOrUpdateApartment(gomock.Any(), req).
 					Return(&models.Apartment{}, errors.New("upsert error"))

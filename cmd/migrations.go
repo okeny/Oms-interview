@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"time"
-
+	// Import PostgreSQL driver for database/sql
 	_ "github.com/lib/pq"
 	migrate "github.com/rubenv/sql-migrate"
 	"github.com/spf13/cobra"
@@ -33,7 +33,7 @@ func runUpCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "up",
 		Short: "Apply all up migrations",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, args []string) {
 
 			dbClient, err := database.NewClient()
 			if err != nil {
@@ -57,7 +57,7 @@ func runDownCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "down",
 		Short: "run migrations down",
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, args []string) {
 			// Connect to the database
 			dbClient, err := database.NewClient()
 			if err != nil {

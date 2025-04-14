@@ -8,6 +8,6 @@ import (
 
 type HandlerInterface interface {
 	GetID(c *fiber.Ctx) (int, error)
-	GetCreateOrUpdateRequest(c *fiber.Ctx) (ApartmentRequest, error)
+	GetCreateOrUpdateRequest(c *fiber.Ctx) (Request, error)
 	CheckBuilding(ctx context.Context, buildingID int) (bool, error)
 }

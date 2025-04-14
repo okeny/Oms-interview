@@ -1,6 +1,6 @@
 package apartment
 
-type ApartmentRequest struct {
+type Request struct {
 	ID         int    `json:"id,omitempty"`
 	BuildingID int    `json:"building_id" binding:"required"`
 	Number     string `json:"number" binding:"required"`

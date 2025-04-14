@@ -47,7 +47,7 @@ func (s Service) GetApartmentsByBuilding(ctx context.Context,
 
 // Create or update apartment
 func (s Service) CreateOrUpdateApartment(ctx context.Context,
-	request apartment.ApartmentRequest) (*models.Apartment, error) {
+	request apartment.Request) (*models.Apartment, error) {
 
 	apartmentModel := mapApartmentRequestToModel(request)
 	apart, err := s.repo.CreateOrUpdateApartment(ctx, apartmentModel)

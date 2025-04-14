@@ -20,7 +20,7 @@ func TestHandleCorsMiddleware(t *testing.T) {
 	})
 
 	// Simulate a preflight request
-	req := httptest.NewRequest(http.MethodOptions, "/", nil)
+	req := httptest.NewRequest(http.MethodOptions, "/", http.NoBody)
 	req.Header.Set("Origin", "http://example.com")
 	req.Header.Set("Access-Control-Request-Method", "GET")
 

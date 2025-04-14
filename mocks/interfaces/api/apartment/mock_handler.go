@@ -52,10 +52,10 @@ func (mr *MockHandlerInterfaceMockRecorder) CheckBuilding(ctx, buildingID interf
 }
 
 // GetCreateOrUpdateRequest mocks base method.
-func (m *MockHandlerInterface) GetCreateOrUpdateRequest(c *fiber.Ctx) (apartment.ApartmentRequest, error) {
+func (m *MockHandlerInterface) GetCreateOrUpdateRequest(c *fiber.Ctx) (apartment.Request, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCreateOrUpdateRequest", c)
-	ret0, _ := ret[0].(apartment.ApartmentRequest)
+	ret0, _ := ret[0].(apartment.Request)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

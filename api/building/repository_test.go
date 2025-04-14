@@ -21,7 +21,7 @@ func setupTestDB(t *testing.T) (*sql.DB, sqlmock.Sqlmock, func()) {
 	cleanup := func() {
 		db.Close()
 	}
-	//for test purposes only
+	// for test purposes only
 	boil.DebugMode = true
 
 	return db, mock, cleanup

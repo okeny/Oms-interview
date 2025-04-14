@@ -26,15 +26,15 @@ func (h Handler) GetID(c *fiber.Ctx) (int, error) {
 	return id, nil
 }
 
-func (h Handler) GetCreateOrUpdateRequest(c *fiber.Ctx) (apartment.ApartmentRequest, error) {
-	var request apartment.ApartmentRequest
+func (h Handler) GetCreateOrUpdateRequest(c *fiber.Ctx) (apartment.Request, error) {
+	var request apartment.Request
 	// Parse request body into apartment struct
 	if err := c.BodyParser(&request); err != nil {
-		return apartment.ApartmentRequest{}, err
+		return apartment.Request{}, err
 	}
 	_, err := h.CheckBuilding(c.Context(), request.BuildingID)
 	if err != nil {
-		return apartment.ApartmentRequest{}, err
+		return apartment.Request{}, err
 	}
 
 	return request, nil
