@@ -201,4 +201,3 @@ sslmode = "disable"
 improvements
 add test cases for the other packages 
 add cache like redis to speed up the response
-add a health checker endpoint

@@ -1,4 +1,4 @@
-name: Go CI/CD Pipeline
+name: Building management CI/CD
 
 on:
   push:
@@ -55,7 +55,7 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        
+
       - name: Debug DockerHub Secrets
         run: |
           echo "DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}"
